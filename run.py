@@ -84,6 +84,7 @@ def restart():
 """
 def run_bench():
 
+    
     print ('[INFO] --------------------------------------------------')
     print ('[INFO]              Starting LEBench tests')
     print ('[INFO]              Current time: ' + str(datetime.now().time()))
@@ -121,6 +122,20 @@ def run_bench():
                 print (line)
             raise Exception('[FATAL] test run encountered error.')
 
+try:
+    WORKING_DIR = os.environ['LEBENCH_DIR']
+except:
+    raise ValueError('$LEBENCH_DIR is not set. Example: "/home/username/LEBench/".')
+
+if 'LEBench' not in WORKING_DIR:
+    raise ValueError('$LEBENCH_DIR should point to the directory containing LEBench. Example: "/home/username/LEBench/".')
+
+KERN_INDEX_FILE = WORKING_DIR + KERN_INDEX_FILE
+LOCAL_GRUB_FILE = WORKING_DIR + LOCAL_GRUB_FILE
+KERN_LIST_FILE  = WORKING_DIR + KERN_LIST_FILE
+RESULT_DIR      = WORKING_DIR + RESULT_DIR
+TEST_DIR        = WORKING_DIR + TEST_DIR
+
 
 if __name__ == '__main__':
 
@@ -128,19 +143,19 @@ if __name__ == '__main__':
     if not os.geteuid() == 0:
         raise Exception('This script should be run with "sudo".')
 
-    try:
-        WORKING_DIR = os.environ['LEBENCH_DIR']
-    except:
-        raise ValueError('$LEBENCH_DIR is not set. Example: "/home/username/LEBench/".')
+    # try:
+    #     WORKING_DIR = os.environ['LEBENCH_DIR']
+    # except:
+    #     raise ValueError('$LEBENCH_DIR is not set. Example: "/home/username/LEBench/".')
 
-    if 'LEBench' not in WORKING_DIR:
-        raise ValueError('$LEBENCH_DIR should point to the directory containing LEBench. Example: "/home/username/LEBench/".')
+    # if 'LEBench' not in WORKING_DIR:
+    #     raise ValueError('$LEBENCH_DIR should point to the directory containing LEBench. Example: "/home/username/LEBench/".')
 
-    KERN_INDEX_FILE = WORKING_DIR + KERN_INDEX_FILE
-    LOCAL_GRUB_FILE = WORKING_DIR + LOCAL_GRUB_FILE
-    KERN_LIST_FILE  = WORKING_DIR + KERN_LIST_FILE
-    RESULT_DIR      = WORKING_DIR + RESULT_DIR
-    TEST_DIR        = WORKING_DIR + TEST_DIR
+    # KERN_INDEX_FILE = WORKING_DIR + KERN_INDEX_FILE
+    # LOCAL_GRUB_FILE = WORKING_DIR + LOCAL_GRUB_FILE
+    # KERN_LIST_FILE  = WORKING_DIR + KERN_LIST_FILE
+    # RESULT_DIR      = WORKING_DIR + RESULT_DIR
+    # TEST_DIR        = WORKING_DIR + TEST_DIR
 
     if not os.path.exists(KERN_LIST_FILE):
         raise IOError('Cannot open "kern_list" file. If it\'s not present, '

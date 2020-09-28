@@ -56,7 +56,7 @@ char *new_output_fn = NULL;
 #define OUTPUT_FILE_PATH	""
 #define OUTPUT_FN		OUTPUT_FILE_PATH "output_file.csv"
 #define NEW_OUTPUT_FN	OUTPUT_FILE_PATH "new_output_file.csv"
-#define DEBUG false
+#define DEBUG true
 #define BASE_ITER 10000
 
 #define PAGE_SIZE 4096
@@ -903,7 +903,10 @@ void send_test(struct timespec *timeArray, int iter, int *i) {
 	memset(&server_addr, 0, sizeof(struct sockaddr_un));
 	server_addr.sun_family = AF_UNIX;
 	strncpy(server_addr.sun_path, home, sizeof(server_addr.sun_path) - 1); 
-	strncpy(server_addr.sun_path, sock, sizeof(server_addr.sun_path) - 1); 
+	strncpy(server_addr.sun_path, sock, sizeof(server_addr.sun_path) - 1);
+
+	printf("CHECKING FOR EXISTING SOCKET AT %s\n", server_addr.sun_path);
+	
 
 	int forkId = fork();
 
@@ -913,6 +916,7 @@ void send_test(struct timespec *timeArray, int iter, int *i) {
 	}
 
 	if (forkId == 0) {
+		//CHILD
 		close(fds1[0]);
 		close(fds2[1]);
 
@@ -920,12 +924,26 @@ void send_test(struct timespec *timeArray, int iter, int *i) {
 		socklen_t client_addr_len;
 	
 		int fd_server = socket(AF_UNIX, SOCK_STREAM, 0);
-		if (fd_server < 0) printf("[error] failed to open server socket.\n");
+		if (fd_server < 0) {			
+			printf("[error] failed to open server socket.\n");
+			perror("send_test:child failed to create socket");
+			exit(2);
+		}
 	
 		retval = bind(fd_server, (struct sockaddr *) &server_addr, sizeof(struct sockaddr_un));
-		if (retval == -1) printf("[error] failed to bind.\n");
+		
+		
+		if (retval == -1){
+			printf("[error] failed to bind.\n");
+			perror("send_test: child failed to bind");
+			exit(2);
+		}
 		retval = listen(fd_server, 10); 
-		if (retval == -1) printf("[error] failed to listen.\n");
+		if (retval == -1){
+			printf("[error] failed to listen.\n");
+			perror("send_test: child failed to listen");
+			exit(2);
+		} 
 		if (DEBUG) printf("Waiting for connection\n");
 
 		write(fds1[1], &w, 1);
@@ -942,11 +960,12 @@ void send_test(struct timespec *timeArray, int iter, int *i) {
 		close(fds2[0]);
 
 
-        	kill(getpid(),SIGINT);
+        kill(getpid(),SIGINT);
 		printf("[error] unable to kill child process\n");
 		return;
 
 	} else {
+		//Parent
 		struct timespec startTime, endTime;
 		close(fds1[1]);
 		close(fds2[0]);
@@ -954,9 +973,17 @@ void send_test(struct timespec *timeArray, int iter, int *i) {
 		read(fds1[0], &r, 1);
 
 		int fd_client = socket(AF_UNIX, SOCK_STREAM, 0);
-		if (fd_client < 0) printf("[error] failed to open client socket.\n");
+		if (fd_client < 0) {
+			printf("[error] failed to open client socket.\n");
+			perror("send_test: Parent (client) failed to generate socket");
+			exit(2);
+		}
 		retval = connect(fd_client, (struct sockaddr *) &server_addr, sizeof(struct sockaddr_un));
-		if (retval == -1) printf("[error] failed to connect.\n");
+		if (retval == -1){
+			printf("[error] failed to connect.\n");
+			perror("send_test: Parent (client) failed to connect");
+			exit(2);
+		} 
 
 		char *buf = (char *) malloc (sizeof(char) * msg_size);
 		for (int i = 0; i < msg_size; i++) {
@@ -973,6 +1000,8 @@ void send_test(struct timespec *timeArray, int iter, int *i) {
 
 			if (retval == -1) {
 				printf("[error] failed to send.\n");
+				perror("send_test: Parent (client) failed to send");
+				exit(2);
 			}
 		}
 
@@ -1003,7 +1032,7 @@ void recv_test(struct timespec *timeArray, int iter, int *i) {
 	struct sockaddr_un server_addr;
 	memset(&server_addr, 0, sizeof(struct sockaddr_un));
 	server_addr.sun_family = AF_UNIX;
-	strncpy(server_addr.sun_path, sock, sizeof(server_addr.sun_path) - 1); 
+	strncpy(server_addr.sun_path, sock, sizeof(server_addr.sun_path) - 1); 	
 
 	int forkId = fork();
 
@@ -1023,7 +1052,11 @@ void recv_test(struct timespec *timeArray, int iter, int *i) {
 		if (fd_server < 0) printf("[error] failed to open server socket.\n");
 	
 		retval = bind(fd_server, (struct sockaddr *) &server_addr, sizeof(struct sockaddr_un));
-		if (retval == -1) printf("[error] failed to bind.\n");
+		if (retval == -1){
+			printf("[error] failed to bind.\n");
+			perror("send_test: child failed to bind");
+			exit(2);
+		}
 		retval = listen(fd_server, 10);
 		if (retval == -1) printf("[error] failed to listen.\n");
 		if (DEBUG) printf("Waiting for connection\n");
@@ -1176,9 +1209,9 @@ int main(int argc, char *argv[])
 	/*****************************************/
 	/*            CONTEXT SWITCH             */
 	/*****************************************/
-	info.iter = BASE_ITER * 10;
-	info.name = "context siwtch";
-	one_line_test(fp, copy, context_switch_test, &info);
+	// info.iter = BASE_ITER * 10;
+	// info.name = "context siwtch";
+	// one_line_test(fp, copy, context_switch_test, &info);
 
 
 	/*****************************************/
@@ -1188,11 +1221,13 @@ int main(int argc, char *argv[])
 	curr_iter_limit = 50;
 	printf("msg size: %d.\n", msg_size);
 	printf("curr iter limit: %d.\n", curr_iter_limit);
-	info.iter = BASE_ITER * 10;
+	//info.iter = BASE_ITER * 10;
+	info.iter = 10;
 	info.name = "send";
 	one_line_test_v2(fp, copy, send_test, &info);
 	
-	info.iter = BASE_ITER * 10;
+	//info.iter = BASE_ITER * 10;
+	info.iter = 10;
 	info.name = "recv";
 	one_line_test_v2(fp, copy, recv_test, &info);
 	
@@ -1201,11 +1236,13 @@ int main(int argc, char *argv[])
 	curr_iter_limit = 1;
 	printf("msg size: %d.\n", msg_size);
 	printf("curr iter limit: %d.\n", curr_iter_limit);
-	info.iter = BASE_ITER;
+	//info.iter = BASE_ITER;
+	info.iter = 10;
 	info.name = "big send";
 	one_line_test_v2(fp, copy, send_test, &info);
 		
-	info.iter = BASE_ITER;
+	//info.iter = BASE_ITER;
+	info.iter = 10;
 	info.name = "big recv";
 	one_line_test_v2(fp, copy, recv_test, &info);
 	
@@ -1213,43 +1250,43 @@ int main(int argc, char *argv[])
 	/*****************************************/
 	/*         FORK & THREAD CREATE          */
 	/*****************************************/
-	info.iter = BASE_ITER * 2;
-	info.name = "fork";
-	two_line_test(fp, copy, forkTest, &info);
+	// info.iter = BASE_ITER * 2;
+	// info.name = "fork";
+	// two_line_test(fp, copy, forkTest, &info);
 	
-	info.iter = BASE_ITER * 5;
-	info.name = "thr create";
-	two_line_test(fp, copy, threadTest, &info);
+	// info.iter = BASE_ITER * 5;
+	// info.name = "thr create";
+	// two_line_test(fp, copy, threadTest, &info);
 
 
-	int page_count = 6000;
-	void *pages[page_count];
-	for (int i = 0; i < page_count; i++) {
-    		pages[i] = mmap(NULL, PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-	}
+	// int page_count = 6000;
+	// void *pages[page_count];
+	// for (int i = 0; i < page_count; i++) {
+    // 		pages[i] = mmap(NULL, PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+	// }
 	
-	info.iter = BASE_ITER / 2;	
-	info.name = "big fork";
-	two_line_test(fp, copy, forkTest, &info);
+	// info.iter = BASE_ITER / 2;	
+	// info.name = "big fork";
+	// two_line_test(fp, copy, forkTest, &info);
 
-	for (int i = 0; i < page_count; i++) {
-		munmap(pages[i], PAGE_SIZE);
-	}
+	// for (int i = 0; i < page_count; i++) {
+	// 	munmap(pages[i], PAGE_SIZE);
+	// }
 
-	page_count = 12000;
-	printf("Page count: %d.\n", page_count);
-	void *pages1[page_count];
-	for (int i = 0; i < page_count; i++) {
-    		pages1[i] = mmap(NULL, PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-	}
+	// page_count = 12000;
+	// printf("Page count: %d.\n", page_count);
+	// void *pages1[page_count];
+	// for (int i = 0; i < page_count; i++) {
+    // 		pages1[i] = mmap(NULL, PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+	// }
 	
-	info.iter = BASE_ITER / 2;	
-	info.name = "huge fork";
-	two_line_test(fp, copy, forkTest, &info);
+	// info.iter = BASE_ITER / 2;	
+	// info.name = "huge fork";
+	// two_line_test(fp, copy, forkTest, &info);
 
-	for (int i = 0; i < page_count; i++) {
-		munmap(pages1[i], PAGE_SIZE);
-	}
+	// for (int i = 0; i < page_count; i++) {
+	// 	munmap(pages1[i], PAGE_SIZE);
+	// }
 
 
 	/*****************************************/
@@ -1257,138 +1294,142 @@ int main(int argc, char *argv[])
 	/*****************************************/
 
 	/****** SMALL ******/
-	file_size = PAGE_SIZE;	
-	printf("file size: %d.\n", file_size);
+	// file_size = PAGE_SIZE;	
+	// printf("file size: %d.\n", file_size);
 
-	info.iter = BASE_ITER * 10;
-	info.name = "small write";
-	one_line_test(fp, copy, write_test, &info);
+	// info.iter = BASE_ITER * 10;
+	// info.name = "small write";
+	// one_line_test(fp, copy, write_test, &info);
       
-	info.iter = BASE_ITER * 10; 
-	info.name = "small read";
-	read_warmup();
-	one_line_test(fp, copy, read_test, &info);
+	// info.iter = BASE_ITER * 10; 
+	// info.name = "small read";
+	// read_warmup();
+	// one_line_test(fp, copy, read_test, &info);
 	
-	info.iter = BASE_ITER * 10;
-	info.name = "small mmap";
-	one_line_test(fp, copy, mmap_test, &info);
+	// info.iter = BASE_ITER * 10;
+	// info.name = "small mmap";
+	// one_line_test(fp, copy, mmap_test, &info);
 	
-	info.iter = BASE_ITER * 10;
-	info.name = "small munmap";
-	one_line_test(fp, copy, munmap_test, &info);
+	// info.iter = BASE_ITER * 10;
+	// info.name = "small munmap";
+	// one_line_test(fp, copy, munmap_test, &info);
 
-	info.iter = BASE_ITER * 5;
-	info.name = "small page fault";
-	one_line_test(fp, copy, page_fault_test, &info);
+	/* TODO: Reimplement */
+	// info.iter = BASE_ITER * 5;
+	// info.name = "small page fault";
+	// one_line_test(fp, copy, page_fault_test, &info);
 
 	/****** MID ******/
-	file_size = PAGE_SIZE * 10;
-	printf("file size: %d.\n", file_size);
+	// file_size = PAGE_SIZE * 10;
+	// printf("file size: %d.\n", file_size);
 
-	info.iter = BASE_ITER * 10;
-	info.name = "mid write";
-	one_line_test(fp, copy, write_test, &info);
+	// info.iter = BASE_ITER * 10;
+	// info.name = "mid write";
+	// one_line_test(fp, copy, write_test, &info);
 	
-	info.iter = BASE_ITER * 10;
-	info.name = "mid read";
-	read_warmup();
-	one_line_test(fp, copy, read_test, &info);
+	// info.iter = BASE_ITER * 10;
+	// info.name = "mid read";
+	// read_warmup();
+	// one_line_test(fp, copy, read_test, &info);
 
-	info.iter = BASE_ITER * 10;
-	info.name = "mid mmap";
-	one_line_test(fp, copy, mmap_test, &info);
+	// info.iter = BASE_ITER * 10;
+	// info.name = "mid mmap";
+	// one_line_test(fp, copy, mmap_test, &info);
 	
-	info.iter = BASE_ITER * 10;
-	info.name = "mid munmap";
-	one_line_test(fp, copy, munmap_test, &info);
+	// info.iter = BASE_ITER * 10;
+	// info.name = "mid munmap";
+	// one_line_test(fp, copy, munmap_test, &info);
 
-	info.iter = BASE_ITER * 5;
-	info.name = "mid page fault";
-	one_line_test(fp, copy, page_fault_test, &info);
+	/* TODO: Reimplement */
+	// info.iter = BASE_ITER * 5;
+	// info.name = "mid page fault";
+	// one_line_test(fp, copy, page_fault_test, &info);
 
 	/****** BIG ******/
-	file_size = PAGE_SIZE * 1000;	
-	printf("file size: %d.\n", file_size);
+	// file_size = PAGE_SIZE * 1000;	
+	// printf("file size: %d.\n", file_size);
 
-	info.iter = BASE_ITER / 2;
-	info.name = "big write";
-	one_line_test(fp, copy, write_test, &info);
+	// info.iter = BASE_ITER / 2;
+	// info.name = "big write";
+	// one_line_test(fp, copy, write_test, &info);
 	
-	info.iter = BASE_ITER;
-	info.name = "big read";
-	read_warmup();
-	one_line_test(fp, copy, read_test, &info);
+	// info.iter = BASE_ITER;
+	// info.name = "big read";
+	// read_warmup();
+	// one_line_test(fp, copy, read_test, &info);
 	
-	info.iter = BASE_ITER * 10;
-	info.name = "big mmap";
-	one_line_test(fp, copy, mmap_test, &info);
+	// info.iter = BASE_ITER * 10;
+	// info.name = "big mmap";
+	// one_line_test(fp, copy, mmap_test, &info);
 	
-	info.iter = BASE_ITER / 4;
-	info.name = "big munmap";
-	one_line_test(fp, copy, munmap_test, &info);
+	// info.iter = BASE_ITER / 4;
+	// info.name = "big munmap";
+	// one_line_test(fp, copy, munmap_test, &info);
 	
-	info.iter = BASE_ITER * 5;
-	info.name = "big page fault";
-	one_line_test(fp, copy, page_fault_test, &info);
+	/* TODO: Reimplement */
+	// info.iter = BASE_ITER * 5;
+	// info.name = "big page fault";
+	// one_line_test(fp, copy, page_fault_test, &info);
 
        /****** HUGE ******/
-	file_size = PAGE_SIZE * 10000;	
-	printf("file size: %d.\n", file_size);
+	// file_size = PAGE_SIZE * 10000;	
+	// printf("file size: %d.\n", file_size);
 
-	info.iter = BASE_ITER / 4;
-	info.name = "huge write";
-	one_line_test(fp, copy, write_test, &info);
+	// info.iter = BASE_ITER / 4;
+	// info.name = "huge write";
+	// one_line_test(fp, copy, write_test, &info);
 
-	info.iter = BASE_ITER;
-	info.name = "huge read";
-	one_line_test(fp, copy, read_test, &info);
+	// info.iter = BASE_ITER;
+	// info.name = "huge read";
+	// one_line_test(fp, copy, read_test, &info);
 	
-	info.iter = BASE_ITER * 10;
-	info.name = "huge mmap";
-	one_line_test(fp, copy, mmap_test, &info);
+	// info.iter = BASE_ITER * 10;
+	// info.name = "huge mmap";
+	// one_line_test(fp, copy, mmap_test, &info);
 	
-	info.iter = BASE_ITER / 4; 
-	info.name = "huge munmap";
-	one_line_test(fp, copy, munmap_test, &info);
+	// info.iter = BASE_ITER / 4; 
+	// info.name = "huge munmap";
+	// one_line_test(fp, copy, munmap_test, &info);
 
-	info.iter = BASE_ITER * 5;
-	info.name = "huge page fault";
-	one_line_test(fp, copy, page_fault_test, &info);
+	/* TODO: Reimplement */
+	// info.iter = BASE_ITER * 5;
+	// info.name = "huge page fault";
+	// one_line_test(fp, copy, page_fault_test, &info);
 
 	/*****************************************/
 	/*              WRITE & READ             */
 	/*****************************************/
 
-	/****** SMALL ******/
-	fd_count = 10;
+	// /****** SMALL ******/
+	// fd_count = 10;
 
-	info.iter = BASE_ITER * 10;
-	info.name = "select";
-	one_line_test(fp, copy, select_test, &info);
+	// info.iter = BASE_ITER * 10;
+	// info.name = "select";
+	// one_line_test(fp, copy, select_test, &info);
 	
-	info.iter = BASE_ITER * 10;
-	info.name = "poll";
-	one_line_test(fp, copy, poll_test, &info);
+	// info.iter = BASE_ITER * 10;
+	// info.name = "poll";
+	// one_line_test(fp, copy, poll_test, &info);
 		
-	info.iter = BASE_ITER * 10;
-	info.name = "epoll";
-	one_line_test(fp, copy, epoll_test, &info);
+	// info.iter = BASE_ITER * 10;
+	// info.name = "epoll";
+	// one_line_test(fp, copy, epoll_test, &info);
 	
 
-	/****** BIG ******/
-	fd_count = 1000;
+	// /****** BIG ******/
+	// fd_count = 1000;
 
-	info.iter = BASE_ITER;
-	info.name = "select big";
-	one_line_test(fp, copy, select_test, &info);
+	// info.iter = BASE_ITER;
+	// info.name = "select big";
+	// one_line_test(fp, copy, select_test, &info);
 
-	info.iter = BASE_ITER;
-	info.name = "poll big";
-	one_line_test(fp, copy, poll_test, &info);
+	// info.iter = BASE_ITER;
+	// info.name = "poll big";
+	// one_line_test(fp, copy, poll_test, &info);
 
-	info.iter = BASE_ITER;
-	info.name = "epoll big";
-	one_line_test(fp, copy, epoll_test, &info);
+	// info.iter = BASE_ITER;
+	// info.name = "epoll big";
+	// one_line_test(fp, copy, epoll_test, &info);
 
 	fclose(fp);
 	if (!isFirstIteration)
