@@ -10,121 +10,109 @@ diff: 0.000000
 curr 0.000000023
 diff: 0.000000
 result 0.000000023
-Test took: 0.319733652 seconds
+Test took: 0.310905955 seconds
 Performing test cpu.
 Total test iteration 100.
 in calc_k_closest
-curr 0.002558882
+curr 0.002558880
 diff: 0.000000
-curr 0.002558882
+curr 0.002558880
 diff: 0.000000
-curr 0.002558882
+curr 0.002558880
 diff: 0.000000
-curr 0.002558882
+curr 0.002558880
 diff: 0.000000
-result 0.002558882
-Test took: 0.256274141 seconds
+result 0.002558880
+Test took: 0.256919771 seconds
 Performing test getpid.
 Total test iteration 1000000.
 in calc_k_closest
-curr 0.000000434
+curr 0.000000432
 diff: 0.000000
-curr 0.000000434
+curr 0.000000432
 diff: 0.000000
-curr 0.000000434
+curr 0.000000432
 diff: 0.000000
-curr 0.000000434
-diff: 0.000000
-result 0.000000434
-Test took: 0.726180237 seconds
+curr 0.000000433
+diff: 0.002315
+result 0.000000432
+Test took: 0.723902065 seconds
 msg size: 1.
 curr iter limit: 50.
 Performing test send.
 Total test iteration 10.
-in calc_k_closest
-curr 0.000001924
-diff: 0.001562
-curr 0.000001924
-diff: 0.000000
-curr 0.000001928
-diff: 0.002079
-curr 0.000001934
-diff: 0.003112
-result 0.000001921
-Test took: 0.000774906 seconds
+.in calc_k_closest
+curr 0.000001891
+diff: 0.004782
+curr 0.000001908
+diff: 0.008990
+curr 0.000001918
+diff: 0.005241
+curr 0.000001925
+diff: 0.003650
+result 0.000001882
+Test took: 0.000629373 seconds
 Performing test recv.
 Total test iteration 10.
-Waiting for connection
+.Waiting for connection
 Connection accepted.
 in calc_k_closest
-curr 0.000002001
-diff: 0.054268
-curr 0.000002008
-diff: 0.003498
-curr 0.000002011
-diff: 0.001494
-curr 0.000002051
-diff: 0.019891
-curr 0.000002082
-diff: 0.015115
-curr 0.000002122
-diff: 0.019212
-result 0.000002008
-Test took: 0.000776918 seconds
+curr 0.000002061
+diff: 0.011286
+curr 0.000002062
+diff: 0.000485
+curr 0.000002062
+diff: 0.000000
+curr 0.000002065
+diff: 0.001455
+result 0.000002038
+Test took: 0.000602197 seconds
 msg size: 96000.
 curr iter limit: 1.
 Performing test big send.
 Total test iteration 10.
-in calc_k_closest
-curr 0.000017272
-diff: 0.051888
-curr 0.000017893
-diff: 0.035954
-curr 0.000018291
-diff: 0.022243
-curr 0.000018485
-diff: 0.010606
-curr 0.000018578
-diff: 0.005031
-curr 0.000018628
-diff: 0.002691
-result 0.000017893
-Test took: 0.013541203 seconds
+..........in calc_k_closest
+curr 0.000018164
+diff: 0.013786
+curr 0.000018839
+diff: 0.037161
+curr 0.000018943
+diff: 0.005520
+curr 0.000019488
+diff: 0.028771
+result 0.000017917
+Test took: 0.013409648 seconds
 Performing test big recv.
 Total test iteration 10.
-Waiting for connection
+.Waiting for connection
 Connection accepted.
-Waiting for connection
+.Waiting for connection
 Connection accepted.
-Waiting for connection
+.Waiting for connection
 Connection accepted.
-Waiting for connection
+.Waiting for connection
 Connection accepted.
-Waiting for connection
+.Waiting for connection
 Connection accepted.
-Waiting for connection
+.Waiting for connection
 Connection accepted.
-Waiting for connection
+.Waiting for connection
 Connection accepted.
-Waiting for connection
+.Waiting for connection
 Connection accepted.
-Waiting for connection
+.Waiting for connection
 Connection accepted.
-Waiting for connection
+.Waiting for connection
 Connection accepted.
 in calc_k_closest
-curr 0.000020068
-diff: 0.447177
-curr 0.000020149
-diff: 0.004036
-curr 0.000020216
-diff: 0.003325
-curr 0.000020282
-diff: 0.003265
-curr 0.000020316
-diff: 0.001676
-curr 0.000020476
-diff: 0.007876
-result 0.000020149
-Test took: 0.013175868 seconds
-Test took: 61.330842302 seconds
+curr 0.000020065
+diff: 0.000948
+curr 0.000020075
+diff: 0.000498
+curr 0.000020112
+diff: 0.001843
+curr 0.000020116
+diff: 0.000199
+result 0.000020046
+Test took: 0.013200801 seconds
+Test took: 61.319916461 seconds
