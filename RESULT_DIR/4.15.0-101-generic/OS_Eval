@@ -10,139 +10,121 @@ diff: 0.000000
 curr 0.000000023
 diff: 0.000000
 result 0.000000023
-Test took: 0.327335446 seconds
+Test took: 0.319733652 seconds
 Performing test cpu.
 Total test iteration 100.
 in calc_k_closest
-curr 0.002545832
+curr 0.002558882
 diff: 0.000000
-curr 0.002545832
+curr 0.002558882
 diff: 0.000000
-curr 0.002545832
+curr 0.002558882
 diff: 0.000000
-curr 0.002545833
+curr 0.002558882
 diff: 0.000000
-result 0.002545831
-Test took: 0.254882195 seconds
+result 0.002558882
+Test took: 0.256274141 seconds
 Performing test getpid.
 Total test iteration 1000000.
 in calc_k_closest
-curr 0.000000438
+curr 0.000000434
 diff: 0.000000
-curr 0.000000438
+curr 0.000000434
 diff: 0.000000
-curr 0.000000438
+curr 0.000000434
 diff: 0.000000
-curr 0.000000438
+curr 0.000000434
 diff: 0.000000
-result 0.000000438
-Test took: 0.736596307 seconds
+result 0.000000434
+Test took: 0.726180237 seconds
 msg size: 1.
 curr iter limit: 50.
 Performing test send.
 Total test iteration 10.
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
 in calc_k_closest
-curr 0.000001884
-diff: 0.003729
-curr 0.000001918
-diff: 0.018047
 curr 0.000001924
-diff: 0.003128
+diff: 0.001562
+curr 0.000001924
+diff: 0.000000
 curr 0.000001928
 diff: 0.002079
-result 0.000001877
-Test took: 0.000636755 seconds
+curr 0.000001934
+diff: 0.003112
+result 0.000001921
+Test took: 0.000774906 seconds
 Performing test recv.
 Total test iteration 10.
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
 Waiting for connection
 Connection accepted.
 in calc_k_closest
-curr 0.000002028
-diff: 0.009960
-curr 0.000002029
-diff: 0.000493
-curr 0.000002034
-diff: 0.002464
-curr 0.000002035
-diff: 0.000492
+curr 0.000002001
+diff: 0.054268
+curr 0.000002008
+diff: 0.003498
+curr 0.000002011
+diff: 0.001494
+curr 0.000002051
+diff: 0.019891
+curr 0.000002082
+diff: 0.015115
+curr 0.000002122
+diff: 0.019212
 result 0.000002008
-Test took: 0.000537329 seconds
+Test took: 0.000776918 seconds
 msg size: 96000.
 curr iter limit: 1.
 Performing test big send.
 Total test iteration 10.
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
 in calc_k_closest
-curr 0.000016944
-diff: 0.015827
-curr 0.000017179
-diff: 0.013869
-curr 0.000017359
-diff: 0.010478
-curr 0.000017362
-diff: 0.000173
-result 0.000016680
-Test took: 0.013331986 seconds
+curr 0.000017272
+diff: 0.051888
+curr 0.000017893
+diff: 0.035954
+curr 0.000018291
+diff: 0.022243
+curr 0.000018485
+diff: 0.010606
+curr 0.000018578
+diff: 0.005031
+curr 0.000018628
+diff: 0.002691
+result 0.000017893
+Test took: 0.013541203 seconds
 Performing test big recv.
 Total test iteration 10.
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
 Waiting for connection
 Connection accepted.
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
 Waiting for connection
 Connection accepted.
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
 Waiting for connection
 Connection accepted.
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
 Waiting for connection
 Connection accepted.
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
 Waiting for connection
 Connection accepted.
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
 Waiting for connection
 Connection accepted.
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
 Waiting for connection
 Connection accepted.
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
 Waiting for connection
 Connection accepted.
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
 Waiting for connection
 Connection accepted.
-CHECKING FOR EXISTING SOCKET AT /TEST_DIR/socket
 Waiting for connection
 Connection accepted.
 in calc_k_closest
-curr 0.000016310
-diff: 0.020970
-curr 0.000018519
-diff: 0.135438
-curr 0.000020266
-diff: 0.094336
-curr 0.000020396
-diff: 0.006415
-curr 0.000020419
-diff: 0.001128
-curr 0.000020433
-diff: 0.000686
-curr 0.000020487
-diff: 0.002643
-curr 0.000020684
-diff: 0.009616
-result 0.000020396
-Test took: 0.012913481 seconds
-Test took: 61.346572882 seconds
+curr 0.000020068
+diff: 0.447177
+curr 0.000020149
+diff: 0.004036
+curr 0.000020216
+diff: 0.003325
+curr 0.000020282
+diff: 0.003265
+curr 0.000020316
+diff: 0.001676
+curr 0.000020476
+diff: 0.007876
+result 0.000020149
+Test took: 0.013175868 seconds
+Test took: 61.330842302 seconds

@@ -902,10 +902,21 @@ void send_test(struct timespec *timeArray, int iter, int *i) {
 	struct sockaddr_un server_addr;
 	memset(&server_addr, 0, sizeof(struct sockaddr_un));
 	server_addr.sun_family = AF_UNIX;
-	strncpy(server_addr.sun_path, home, sizeof(server_addr.sun_path) - 1); 
-	strncpy(server_addr.sun_path, sock, sizeof(server_addr.sun_path) - 1);
+	//Approach 1 - need /TEST_DIR/ off of root
+	// strncpy(server_addr.sun_path, home, sizeof(server_addr.sun_path) - 1); 
+	// strncpy(server_addr.sun_path, sock, sizeof(server_addr.sun_path) - 1);
 
-	printf("CHECKING FOR EXISTING SOCKET AT %s\n", server_addr.sun_path);
+	// Alt Approach - make it work with local dir
+	strncpy(server_addr.sun_path, home, sizeof(server_addr.sun_path) - 1); 
+	strncat(server_addr.sun_path, sock, sizeof(server_addr.sun_path) - 1);
+
+	if (access(server_addr.sun_path, F_OK) != -1){
+		if(remove(server_addr.sun_path)<0){
+			printf("Unable to remove file %s", server_addr.sun_path);	
+		}
+	} else {
+		printf("Unable to access file %s", server_addr.sun_path);
+	}
 	
 
 	int forkId = fork();
@@ -1032,7 +1043,20 @@ void recv_test(struct timespec *timeArray, int iter, int *i) {
 	struct sockaddr_un server_addr;
 	memset(&server_addr, 0, sizeof(struct sockaddr_un));
 	server_addr.sun_family = AF_UNIX;
-	strncpy(server_addr.sun_path, sock, sizeof(server_addr.sun_path) - 1); 	
+	//Initial Approach - Need to generate /TEST_DIR off of root
+	//strncpy(server_addr.sun_path, sock, sizeof(server_addr.sun_path) - 1); 	
+
+	//Alt approach - Make it work with local dir
+	strncpy(server_addr.sun_path, home, sizeof(server_addr.sun_path) - 1); 
+	strncat(server_addr.sun_path, sock, sizeof(server_addr.sun_path) - 1);
+
+	if (access(server_addr.sun_path, F_OK) != -1){
+		if(remove(server_addr.sun_path)<0){
+			printf("Unable to remove file %s", server_addr.sun_path);	
+		}
+	} else {
+		printf("Unable to access file %s", server_addr.sun_path);
+	}
 
 	int forkId = fork();
 
