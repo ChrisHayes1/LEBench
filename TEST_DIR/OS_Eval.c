@@ -57,7 +57,9 @@ char *new_output_fn = NULL;
 #define OUTPUT_FN		OUTPUT_FILE_PATH "output_file.csv"
 #define NEW_OUTPUT_FN	OUTPUT_FILE_PATH "new_output_file.csv"
 #define DEBUG true
-#define BASE_ITER 10000
+#define LIMIT_ITIR true
+/*#define BASE_ITER 10000*/
+#define BASE_ITER 100
 
 #define PAGE_SIZE 4096
 
@@ -1228,18 +1230,18 @@ int main(int argc, char *argv[])
 	/*****************************************/
 
 	sleep(60);
-	info.iter = BASE_ITER * 100;
-	info.name = "ref";
-	one_line_test(fp, copy, ref_test, &info);
+	// info.iter = BASE_ITER * 100;
+	// info.name = "ref";
+	// one_line_test(fp, copy, ref_test, &info);
 
-	info.iter = 100;
-	info.name = "cpu";
-	one_line_test(fp, copy, cpu_test, &info);
+	// info.iter = 100;
+	// info.name = "cpu";
+	// one_line_test(fp, copy, cpu_test, &info);
 
 
-	info.iter = BASE_ITER * 100;
-	info.name = "getpid";
-	one_line_test(fp, copy, getpid_test, &info);
+	// info.iter = BASE_ITER * 100;
+	// info.name = "getpid";
+	// one_line_test(fp, copy, getpid_test, &info);
 
 
 	
@@ -1310,20 +1312,20 @@ int main(int argc, char *argv[])
 		munmap(pages[i], PAGE_SIZE);
 	}
 
-	page_count = 12000;
-	printf("Page count: %d.\n", page_count);
-	void *pages1[page_count];
-	for (int i = 0; i < page_count; i++) {
-    		pages1[i] = mmap(NULL, PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-	}
+	// page_count = 12000;
+	// printf("Page count: %d.\n", page_count);
+	// void *pages1[page_count];
+	// for (int i = 0; i < page_count; i++) {
+    // 		pages1[i] = mmap(NULL, PAGE_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+	// }
 	
-	info.iter = BASE_ITER / 2;	
-	info.name = "huge fork";
-	two_line_test(fp, copy, forkTest, &info);
+	// info.iter = BASE_ITER / 2;	
+	// info.name = "huge fork";
+	// two_line_test(fp, copy, forkTest, &info);
 
-	for (int i = 0; i < page_count; i++) {
-		munmap(pages1[i], PAGE_SIZE);
-	}
+	// for (int i = 0; i < page_count; i++) {
+	// 	munmap(pages1[i], PAGE_SIZE);
+	// }
 
 
 	/*****************************************/
@@ -1376,9 +1378,9 @@ int main(int argc, char *argv[])
 	info.name = "mid munmap";
 	one_line_test(fp, copy, munmap_test, &info);
 
-	info.iter = BASE_ITER * 5;
-	info.name = "mid page fault";
-	one_line_test(fp, copy, page_fault_test, &info);
+	// info.iter = BASE_ITER * 5;
+	// info.name = "mid page fault";
+	// one_line_test(fp, copy, page_fault_test, &info);
 
 	/****** BIG ******/
 	file_size = PAGE_SIZE * 1000;	
@@ -1407,29 +1409,29 @@ int main(int argc, char *argv[])
 	one_line_test(fp, copy, page_fault_test, &info);
 
        /****** HUGE ******/
-	file_size = PAGE_SIZE * 10000;	
-	printf("file size: %d.\n", file_size);
+	// file_size = PAGE_SIZE * 10000;	
+	// printf("file size: %d.\n", file_size);
 
-	info.iter = BASE_ITER / 4;
-	info.name = "huge write";
-	one_line_test(fp, copy, write_test, &info);
+	// info.iter = BASE_ITER / 4;
+	// info.name = "huge write";
+	// one_line_test(fp, copy, write_test, &info);
 
-	info.iter = BASE_ITER;
-	info.name = "huge read";
-	one_line_test(fp, copy, read_test, &info);
+	// info.iter = BASE_ITER;
+	// info.name = "huge read";
+	// one_line_test(fp, copy, read_test, &info);
 	
 	info.iter = BASE_ITER * 10;
 	info.name = "huge mmap";
 	one_line_test(fp, copy, mmap_test, &info);
 	
-	info.iter = BASE_ITER / 4; 
-	info.name = "huge munmap";
-	one_line_test(fp, copy, munmap_test, &info);
+	// info.iter = BASE_ITER / 4; 
+	// info.name = "huge munmap";
+	// one_line_test(fp, copy, munmap_test, &info);
 
 	
-	info.iter = BASE_ITER * 5;
-	info.name = "huge page fault";
-	one_line_test(fp, copy, page_fault_test, &info);
+	// info.iter = BASE_ITER * 5;
+	// info.name = "huge page fault";
+	// one_line_test(fp, copy, page_fault_test, &info);
 
 	/*****************************************/
 	/*              WRITE & READ             */
